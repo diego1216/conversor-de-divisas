@@ -1,0 +1,88 @@
+body {
+  font-family: 'Roboto', Arial, sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+  display: flex;
+  flex-direction: column; /* Organiza los elementos en columna */
+  align-items: center;    /* Centra horizontalmente */
+  min-height: 100vh;
+  margin: 0;
+}
+
+h1, h2 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+.converter-container {
+  display: flex;
+  flex-direction: column; /* Organiza título y formulario verticalmente */
+  align-items: center;
+  gap: 20px; /* Espacio entre título y formulario */
+}
+
+.converter-form {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 400px;
+}
+
+.converter-form .form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.converter-form .form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.converter-form .form-group label {
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #34495e;
+}
+
+.converter-form .form-group input,
+.converter-form .form-group select {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  transition: border 0.3s;
+}
+
+.converter-form .form-group input:focus,
+.converter-form .form-group select:focus {
+  border: 1px solid #3498db;
+  outline: none;
+}
+
+.converter-form .convert-button {
+  background-color: #3498db;
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.converter-form .convert-button:hover {
+  background-color: #2980b9;
+}
+
+.converter-form .result {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  color: #27ae60;
+}
