@@ -4,14 +4,6 @@ block content
   h1= title
   h2= subtitle
 
-  if lastUpdated
-    p Última actualización: #{lastUpdated}
-
-  if exchangeRates
-    ul.exchange-rates
-      each rate, currency in exchangeRates
-        li #{currency}: #{rate.toFixed(2)}
-
   form.converter-form(action="/convert" method="POST")
     .form-row
       .form-group
@@ -26,9 +18,6 @@ block content
           option(value="JPY") JPY
           option(value="BTC") BTC
           option(value="ETH") ETH
-          each currency in Object.keys(exchangeRates)
-            if !['USD', 'EUR', 'JPY', 'BTC', 'ETH'].includes(currency)
-              option(value=currency)= currency
       .form-group
         label A la Divisa
         select(name="toCurrency")
@@ -37,15 +26,35 @@ block content
           option(value="JPY") JPY
           option(value="BTC") BTC
           option(value="ETH") ETH
-          each currency in Object.keys(exchangeRates)
-            if !['USD', 'EUR', 'JPY', 'BTC', 'ETH'].includes(currency)
-              option(value=currency)= currency
     .form-row
       button.convert-button(type="submit") Convertir
 
   if result
     .result
+      h3 Resultado
       p= result
+
+  if fromDetails
+    h3 Información de la moneda de origen (#{fromDetails.name || fromDetails.symbol || 'No disponible'})
+    ul
+      if fromDetails.current_price
+        li Precio actual: $#{fromDetails.current_price.toLocaleString()}
+        li Capitalización de mercado: $#{fromDetails.market_cap.toLocaleString()}
+        li Volumen de trading (24h): $#{fromDetails.total_volume.toLocaleString()}
+        li Cambio en 24h: #{fromDetails.price_change_percentage_24h.toFixed(2)}%
+      else if fromDetails.rate
+        li Tasa de cambio: $#{fromDetails.rate.toLocaleString()}
+
+  if toDetails
+    h3 Información de la moneda de destino (#{toDetails.name || toDetails.symbol || 'No disponible'})
+    ul
+      if toDetails.current_price
+        li Precio actual: $#{toDetails.current_price.toLocaleString()}
+        li Capitalización de mercado: $#{toDetails.market_cap.toLocaleString()}
+        li Volumen de trading (24h): $#{toDetails.total_volume.toLocaleString()}
+        li Cambio en 24h: #{toDetails.price_change_percentage_24h.toFixed(2)}%
+      else if toDetails.rate
+        li Tasa de cambio: $#{toDetails.rate.toLocaleString()}
 
   if error
     .error

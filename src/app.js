@@ -1,13 +1,8 @@
 const express = require('express');
 const path = require('path');
 const dotenv = require('dotenv');
-const { 
-  getCachedExchangeRate, 
-  exchangeRatesCache, 
-  cryptoRatesCache, 
-  lastUpdatedTraditional, 
-  lastUpdatedCrypto 
-} = require('./services/cacheService'); // Servicio de caché
+const { getCachedExchangeRate } = require('./services/cacheService');
+const { getCryptoDetails, getFiatDetails } = require('./services/cryptoService');
 
 dotenv.config();
 
@@ -17,50 +12,76 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 app.use(express.urlencoded({ extended: true }));
 
-// Ruta principal (GET)
+// Ruta principal
 app.get('/', (req, res) => {
-  try {
-    // Renderiza la página principal con tipos de cambio y fechas de actualización
-    res.render('index', { 
-      title: 'Conversor de Divisas', 
-      subtitle: 'Convierta entre monedas y criptomonedas en tiempo real',
-      exchangeRates: { ...exchangeRatesCache, ...cryptoRatesCache }, // Combina monedas y criptomonedas
-      lastUpdatedTraditional: lastUpdatedTraditional?.toLocaleString() || 'N/A',
-      lastUpdatedCrypto: lastUpdatedCrypto?.toLocaleString() || 'N/A', // Manejo seguro de fechas
-    });
-  } catch (error) {
-    console.error('Error al cargar la página principal:', error.message);
-    res.render('error', {
-      message: 'Error al cargar los datos. Por favor, intente nuevamente.',
-    });
-  }
+  res.render('index', {
+    title: 'Conversor de Divisas',
+    subtitle: 'Convierta entre monedas y criptomonedas en tiempo real',
+    result: null,
+    fromDetails: null,
+    toDetails: null,
+    error: null,
+  });
 });
 
 // Ruta para manejar la conversión (POST)
-app.post('/convert', (req, res) => {
+app.post('/convert', async (req, res) => {
   const { amount, fromCurrency, toCurrency } = req.body;
 
   try {
-    // Validación de entrada
     if (!amount || isNaN(amount) || amount <= 0) {
       throw new Error('El monto debe ser un número positivo mayor que 0.');
     }
+
     if (!fromCurrency || !toCurrency) {
       throw new Error('Seleccione monedas válidas para la conversión.');
     }
 
-    // Obtén el tipo de cambio
     const rate = getCachedExchangeRate(fromCurrency, toCurrency);
+    if (!rate) {
+      throw new Error(`No se pudo obtener el tipo de cambio entre ${fromCurrency} y ${toCurrency}.`);
+    }
+
     const result = amount * rate;
 
-    // Renderiza la página principal con el resultado
+    let fromDetails = null;
+    let toDetails = null;
+
+    const cryptoMap = { BTC: 'bitcoin', ETH: 'ethereum' };
+    const cryptoIds = [];
+    const fiatSymbols = [];
+
+    if (cryptoMap[fromCurrency]) {
+      cryptoIds.push(cryptoMap[fromCurrency]);
+    } else {
+      fiatSymbols.push(fromCurrency);
+    }
+
+    if (cryptoMap[toCurrency]) {
+      cryptoIds.push(cryptoMap[toCurrency]);
+    } else {
+      fiatSymbols.push(toCurrency);
+    }
+
+    if (cryptoIds.length > 0) {
+      const cryptoDetails = await getCryptoDetails(cryptoIds);
+      fromDetails = cryptoDetails.find(crypto => crypto.symbol.toUpperCase() === fromCurrency) || fromDetails;
+      toDetails = cryptoDetails.find(crypto => crypto.symbol.toUpperCase() === toCurrency) || toDetails;
+    }
+
+    if (fiatSymbols.length > 0) {
+      const fiatDetails = await getFiatDetails(fiatSymbols);
+      fromDetails = fiatDetails.find(fiat => fiat.symbol === fromCurrency) || fromDetails;
+      toDetails = fiatDetails.find(fiat => fiat.symbol === toCurrency) || toDetails;
+    }
+
     res.render('index', {
       title: 'Conversor de Divisas',
       subtitle: 'Convierta entre monedas y criptomonedas en tiempo real',
       result: `${amount} ${fromCurrency} = ${result.toFixed(2)} ${toCurrency}`,
-      exchangeRates: { ...exchangeRatesCache, ...cryptoRatesCache },
-      lastUpdatedTraditional: lastUpdatedTraditional?.toLocaleString() || 'N/A',
-      lastUpdatedCrypto: lastUpdatedCrypto?.toLocaleString() || 'N/A',
+      fromDetails,
+      toDetails,
+      error: null,
     });
   } catch (error) {
     console.error('Error en la conversión:', error.message);
@@ -68,10 +89,9 @@ app.post('/convert', (req, res) => {
       title: 'Conversor de Divisas',
       subtitle: 'Convierta entre monedas y criptomonedas en tiempo real',
       result: null,
+      fromDetails: null,
+      toDetails: null,
       error: `Error: ${error.message}`,
-      exchangeRates: { ...exchangeRatesCache, ...cryptoRatesCache },
-      lastUpdatedTraditional: lastUpdatedTraditional?.toLocaleString() || 'N/A',
-      lastUpdatedCrypto: lastUpdatedCrypto?.toLocaleString() || 'N/A',
     });
   }
 });
