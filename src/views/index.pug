@@ -13,19 +13,93 @@ block content
       .form-group
         label Desde la Divisa
         select(name="fromCurrency")
-          option(value="USD" selected) USD
+          // Monedas tradicionales
+          option(value="USD") USD
           option(value="EUR") EUR
           option(value="JPY") JPY
-          option(value="BTC") BTC
-          option(value="ETH") ETH
+          option(value="GBP") GBP
+          option(value="AUD") AUD
+          // Criptomonedas
+          option(value="BTC") BTC (Bitcoin)
+          option(value="ETH") ETH (Ethereum)
+          option(value="ADA") ADA (Cardano)
+          option(value="BNB") BNB (Binance Coin)
+          option(value="SOL") SOL (Solana)
+          option(value="XRP") XRP (Ripple)
+          option(value="DOGE") DOGE (Dogecoin)
+          option(value="DOT") DOT (Polkadot)
+          option(value="LTC") LTC (Litecoin)
+          option(value="TRX") TRX (Tron)
+          option(value="SHIB") SHIB (Shiba Inu)
+          option(value="LINK") LINK (Chainlink)
+          option(value="XLM") XLM (Stellar)
+          option(value="XMR") XMR (Monero)
+          option(value="SAND") SAND (The Sandbox)
+          option(value="ATOM") ATOM (Cosmos)
+          option(value="ALGO") ALGO (Algorand)
+          option(value="VET") VET (VeChain)
+          option(value="XTZ") XTZ (Tezos)
+          option(value="APE") APE (ApeCoin)
+          option(value="MANA") MANA (Decentraland)
+          option(value="AXS") AXS (Axie Infinity)
+          option(value="FIL") FIL (Filecoin)
+          option(value="ZEC") ZEC (Zcash)
+          option(value="UNI") UNI (Uniswap)
+          option(value="LUNA") LUNA (Terra Luna)
+          option(value="FTT") FTT (FTX Token)
+          option(value="GRT") GRT (The Graph)
+          option(value="FTM") FTM (Fantom)
+          option(value="KCS") KCS (KuCoin Shares)
+          option(value="HT") HT (Huobi Token)
+          option(value="CHZ") CHZ (Chiliz)
+          option(value="CRO") CRO (Crypto.com Coin)
+          option(value="OKB") OKB (OKB Token)
       .form-group
         label A la Divisa
         select(name="toCurrency")
+          // Monedas tradicionales
           option(value="USD") USD
-          option(value="EUR" selected) EUR
+          option(value="EUR") EUR
           option(value="JPY") JPY
-          option(value="BTC") BTC
-          option(value="ETH") ETH
+          option(value="GBP") GBP
+          option(value="AUD") AUD
+          // Criptomonedas
+          option(value="BTC") BTC (Bitcoin)
+          option(value="ETH") ETH (Ethereum)
+          option(value="ADA") ADA (Cardano)
+          option(value="BNB") BNB (Binance Coin)
+          option(value="SOL") SOL (Solana)
+          option(value="XRP") XRP (Ripple)
+          option(value="DOGE") DOGE (Dogecoin)
+          option(value="DOT") DOT (Polkadot)
+          option(value="LTC") LTC (Litecoin)
+          option(value="TRX") TRX (Tron)
+          option(value="SHIB") SHIB (Shiba Inu)
+          option(value="LINK") LINK (Chainlink)
+          option(value="XLM") XLM (Stellar)
+          option(value="XMR") XMR (Monero)
+          option(value="SAND") SAND (The Sandbox)
+          option(value="ATOM") ATOM (Cosmos)
+          option(value="ALGO") ALGO (Algorand)
+          option(value="VET") VET (VeChain)
+          option(value="XTZ") XTZ (Tezos)
+          option(value="APE") APE (ApeCoin)
+          option(value="MANA") MANA (Decentraland)
+          option(value="AXS") AXS (Axie Infinity)
+          option(value="FIL") FIL (Filecoin)
+          option(value="ZEC") ZEC (Zcash)
+          option(value="UNI") UNI (Uniswap)
+          option(value="LUNA") LUNA (Terra Luna)
+          option(value="FTT") FTT (FTX Token)
+          option(value="GRT") GRT (The Graph)
+          option(value="FTM") FTM (Fantom)
+          option(value="KCS") KCS (KuCoin Shares)
+          option(value="HT") HT (Huobi Token)
+          option(value="CHZ") CHZ (Chiliz)
+          option(value="CRO") CRO (Crypto.com Coin)
+          option(value="OKB") OKB (OKB Token)
+          
+
     .form-row
       button.convert-button(type="submit") Convertir
 

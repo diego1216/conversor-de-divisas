@@ -4,7 +4,7 @@ const cron = require('node-cron'); // Importa el paquete node-cron para las tare
 const { updateExchangeRates } = require('./src/services/cacheService'); // Servicio de caché
 const app = require('./src/app');
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 const server = express();
 
