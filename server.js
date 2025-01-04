@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const cron = require('node-cron'); // Importa el paquete node-cron para las tareas programadas
-const { updateExchangeRates } = require('./src/services/cacheService'); // Servicio de caché
+const { updateCryptoRates } = require('./src/services/cacheService'); // Servicio de caché
 const app = require('./src/app');
 
 const PORT = process.env.PORT || 3002;
@@ -20,12 +20,14 @@ server.use('/', app);
 
 // Configurar cron job para actualizar los tipos de cambio cada hora
 cron.schedule('0 * * * *', async () => {
-  console.log('Iniciando actualización de tipos de cambio...');
-  await updateExchangeRates(); // Actualiza los tipos de cambio en la caché
-  console.log('Tipos de cambio actualizados correctamente.');
+  console.log('Iniciando actualización de criptomonedas...');
+  await updateCryptoRates(); // Actualiza las criptomonedas en la caché
+  console.log('Actualización completa.');
 });
 
 // Inicia el servidor
-server.listen(PORT, () => {
+server.listen(PORT, async () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  console.log('Cargando criptomonedas al iniciar...');
+  await updateCryptoRates();
 });
