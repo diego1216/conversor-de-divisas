@@ -4,27 +4,33 @@ block content
   h1= title
   h2= subtitle
 
-  form.converter-form(action="/convert" method="POST")
-    .form-row
+  if currencies.length === 0 && cryptos.length === 0
+    p.error No hay datos disponibles. Intenta de nuevo más tarde.
+
+  else
+    form.converter-form(action="/convert" method="POST")
       .form-group
         label(for="amount") Cantidad
-        input#amount(type="text" name="amount" placeholder="Ingresa la cantidad" required)
-    .form-row
+        input#amount(type="number" name="amount" required)
       .form-group
-        label Desde la Divisa
+        label Desde
         select(name="fromCurrency")
-          if cryptoOptions && cryptoOptions.length > 0
-            each option in cryptoOptions
-              option(value=option.symbol) #{option.symbol} ($#{option.rate})
-          else
-            option No hay criptomonedas disponibles
+          if currencies && currencies.length
+            each currency in currencies
+              option(value=currency)= currency
+          if cryptos && cryptos.length
+            each crypto in cryptos
+              option(value=crypto)= crypto
       .form-group
-        label A la Divisa
+        label Hacia
         select(name="toCurrency")
-          if cryptoOptions && cryptoOptions.length > 0
-            each option in cryptoOptions
-              option(value=option.symbol) #{option.symbol} ($#{option.rate})
-          else
-            option No hay criptomonedas disponibles
-    .form-row
-      button.convert-button(type="submit") Convertir
+          if currencies && currencies.length
+            each currency in currencies
+              option(value=currency)= currency
+          if cryptos && cryptos.length
+            each crypto in cryptos
+              option(value=crypto)= crypto
+      button(type="submit") Convertir
+
+    if result
+      .result= result

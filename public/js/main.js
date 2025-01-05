@@ -1,3 +1,3 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Conversor de Divisas cargado');
-  });
+  console.log('Aplicación cargada');
+});
