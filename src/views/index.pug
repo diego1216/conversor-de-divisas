@@ -4,35 +4,37 @@ block content
   h1= title
   h2= subtitle
 
-  if cryptos.length > 0 || fiats.length > 0
-    form.converter-form(action="/convert" method="POST")
-      .form-row
-        .form-group
-          label(for="amount") Cantidad
-          input#amount(type="text" name="amount" placeholder="Ingresa la cantidad" required)
-      .form-row
-        .form-group
-          label Desde la Divisa
-          select(name="fromCurrency")
-            each fiat in fiats
-              option(value=fiat.symbol) #{fiat.symbol} 
-            each crypto in cryptos
-              option(value=crypto.symbol) #{crypto.symbol} 
-        .form-group
-          label A la Divisa
-          select(name="toCurrency")
-            each fiat in fiats
-              option(value=fiat.symbol) #{fiat.symbol} 
-            each crypto in cryptos
-              option(value=crypto.symbol) #{crypto.symbol} 
-      .form-row
-        button.convert-button(type="submit") Convertir
+  form.converter-form(action="/convert" method="POST")
+    .form-row
+      .form-group
+        label(for="amount") Cantidad
+        input#amount(type="number" name="amount" placeholder="Ingresa la cantidad" required)
+
+    .form-row
+      .form-group
+        label Desde la Divisa
+        select(name="fromCurrency" required)
+          optgroup(label="Criptomonedas")
+            each crypto in cryptocurrencies
+              option(value=crypto.symbol) #{crypto.name} (#{crypto.symbol})
+          optgroup(label="Monedas Tradicionales")
+            each fiat in fiatCurrencies
+              option(value=fiat.symbol) #{fiat.name} (#{fiat.symbol})
+
+      .form-group
+        label A la Divisa
+        select(name="toCurrency" required)
+          optgroup(label="Criptomonedas")
+            each crypto in cryptocurrencies
+              option(value=crypto.symbol) #{crypto.name} (#{crypto.symbol})
+          optgroup(label="Monedas Tradicionales")
+            each fiat in fiatCurrencies
+              option(value=fiat.symbol) #{fiat.name} (#{fiat.symbol})
+
+    .form-row
+      button.convert-button(type="submit") Convertir
 
   if result
     .result
       h3 Resultado
       p= result
-
-  if error
-    .error
-      p= error
