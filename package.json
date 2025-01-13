@@ -19,6 +19,6 @@
     "devDependencies": {
         "nodemon": "^2.0.22"
     },
-    "author": "Tu Nombre",
+    "author": "Diego Alberto López Arana",
     "license": "ISC"
 }

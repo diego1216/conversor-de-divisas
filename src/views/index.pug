@@ -8,12 +8,15 @@ block content
     .form-row
       .form-group
         label(for="amount") Cantidad
-        input#amount(type="number" name="amount" placeholder="Ingresa la cantidad" required)
+        input#amount(type="number" name="amount" placeholder="Ingresa la cantidad" required maxlength="19" oninput="if(this.value.length > 19) this.value = this.value.slice(0, 19)" )
+        
+        
 
     .form-row
       .form-group
         label Desde la Divisa
         select(name="fromCurrency" required)
+          option(value="" disabled selected) Selecciona la divisa
           optgroup(label="Criptomonedas")
             each crypto in cryptocurrencies
               option(value=crypto.symbol) #{crypto.name} (#{crypto.symbol})
@@ -24,6 +27,7 @@ block content
       .form-group
         label A la Divisa
         select(name="toCurrency" required)
+          option(value="" disabled selected) Selecciona la divisa
           optgroup(label="Criptomonedas")
             each crypto in cryptocurrencies
               option(value=crypto.symbol) #{crypto.name} (#{crypto.symbol})
