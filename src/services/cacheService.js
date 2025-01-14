@@ -1,121 +1,82 @@
 const axios = require('axios');
 
-// Caché para monedas tradicionales y criptomonedas
-let exchangeRatesCache = {};
 let cryptoRatesCache = {};
-let fiatListCache = [];
-let cryptoListCache = [];
-let lastUpdatedTraditional = null;
-let lastUpdatedCrypto = null;
+let exchangeRatesCache = {};
 
-// Intervalos de actualización (en milisegundos)
-const UPDATE_INTERVAL_TRADITIONAL = 60 * 60 * 1000; // 1 hora
-const UPDATE_INTERVAL_CRYPTO = 5 * 60 * 1000; // 5 minutos
-
-// Actualizar monedas tradicionales
-const updateFiatCurrencies = async () => {
-  try {
-    console.log('Actualizando lista de monedas tradicionales...');
-    const response = await axios.get('https://open.er-api.com/v6/latest/USD');
-    if (response.data && response.data.rates) {
-      // Limitar a 50 monedas
-      fiatListCache = Object.keys(response.data.rates)
-        .slice(0, 50)
-        .map((symbol) => ({
-          symbol,
-          name: symbol, // Si hay nombres personalizados, puedes asignarlos aquí
-        }));
-      exchangeRatesCache = response.data.rates;
-      lastUpdatedTraditional = new Date();
-      console.log('Monedas tradicionales actualizadas en la caché.');
-    }
-  } catch (error) {
-    console.error('Error al actualizar monedas tradicionales:', error.message);
-  }
+// Limpia la caché
+const clearCache = () => {
+  cryptoRatesCache = {};
+  exchangeRatesCache = {};
+  console.log('La caché ha sido limpiada.');
 };
 
-// Actualizar criptomonedas
-const updateCryptoCurrencies = async () => {
+// Actualizar tasas de cambio de criptomonedas
+const updateCryptoRates = async () => {
   try {
-    console.log('Actualizando lista de criptomonedas...');
-    const response = await axios.get(
-      'https://api.coingecko.com/api/v3/coins/markets',
-      {
-        params: {
-          vs_currency: 'usd',
-          order: 'market_cap_desc',
-          per_page: 50, // Limitar a las 50 criptomonedas principales
-          page: 1,
-        },
-      }
-    );
+    console.log('Iniciando actualización de criptomonedas...');
+    const response = await axios.get('https://api.coingecko.com/api/v3/coins/markets', {
+      params: { vs_currency: 'usd', per_page: 50 },
+    });
 
-    if (response.data) {
-      // Generar lista de criptomonedas
-      cryptoRatesCache = response.data.reduce((acc, coin) => {
-        acc[coin.symbol.toUpperCase()] = coin.current_price;
-        return acc;
-      }, {});
-
-      cryptoListCache = response.data.map((coin) => ({
-        id: coin.id,
-        symbol: coin.symbol.toUpperCase(),
+    // Actualiza la caché de criptomonedas
+    cryptoRatesCache = response.data.reduce((acc, coin) => {
+      acc[coin.symbol.toUpperCase()] = {
         name: coin.name,
-      }));
-
-      lastUpdatedCrypto = new Date();
-      console.log('Criptomonedas actualizadas en la caché.');
-    }
+        current_price: coin.current_price,
+        market_cap: coin.market_cap,
+        total_volume: coin.total_volume,
+      };
+      return acc;
+    }, {});
+    console.log('Actualización de criptomonedas completada.');
   } catch (error) {
     console.error('Error al actualizar criptomonedas:', error.message);
   }
 };
 
-// Actualizaciones automáticas
-setInterval(async () => {
-  console.log('Iniciando actualización automática de monedas tradicionales...');
-  await updateFiatCurrencies();
-}, UPDATE_INTERVAL_TRADITIONAL);
+// Actualizar tasas de cambio de monedas tradicionales
+const updateExchangeRates = async () => {
+  try {
+    console.log('Iniciando actualización de monedas tradicionales...');
+    const response = await axios.get('https://api.exchangerate-api.com/v4/latest/USD');
 
-setInterval(async () => {
-  console.log('Iniciando actualización automática de criptomonedas...');
-  await updateCryptoCurrencies();
-}, UPDATE_INTERVAL_CRYPTO);
+    // Actualiza la caché de monedas tradicionales
+    exchangeRatesCache = response.data.rates;
+    console.log('Actualización de monedas tradicionales completada.');
+  } catch (error) {
+    console.error('Error al actualizar monedas tradicionales:', error.message);
+  }
+};
 
-// Inicializar la caché al inicio
-(async () => {
-  console.log('Inicializando caché...');
-  await updateFiatCurrencies();
-  await updateCryptoCurrencies();
-})();
+// Obtener tasas de cambio almacenadas
+const getCachedCurrencies = () => {
+  const cryptocurrencies = Object.keys(cryptoRatesCache).map((key) => ({
+    symbol: key,
+    ...cryptoRatesCache[key],
+  }));
 
-// Obtener monedas y criptomonedas desde la caché
-const getCachedCurrencies = () => ({
-  cryptocurrencies: cryptoListCache,
-  fiatCurrencies: fiatListCache,
-});
+  const fiatCurrencies = Object.keys(exchangeRatesCache).map((key) => ({
+    symbol: key,
+    name: key.toUpperCase(),
+    rate: exchangeRatesCache[key],
+  }));
 
-// Obtener tasa de cambio desde la caché
+  return { cryptocurrencies, fiatCurrencies };
+};
+
+// Obtener tasa de cambio
 const getCachedExchangeRate = (fromCurrency, toCurrency) => {
-  const isCryptoFrom = cryptoRatesCache[fromCurrency.toUpperCase()];
-  const isCryptoTo = cryptoRatesCache[toCurrency.toUpperCase()];
+  const isCryptoFrom = cryptoRatesCache[fromCurrency];
+  const isCryptoTo = cryptoRatesCache[toCurrency];
 
   if (isCryptoFrom || isCryptoTo) {
-    const fromRate =
-      cryptoRatesCache[fromCurrency.toUpperCase()] ||
-      (1 / exchangeRatesCache[fromCurrency]);
-    const toRate =
-      cryptoRatesCache[toCurrency.toUpperCase()] ||
-      (1 / exchangeRatesCache[toCurrency]);
-
-    if (!fromRate || !toRate) {
-      throw new Error(`No hay datos para convertir ${fromCurrency} a ${toCurrency}.`);
-    }
+    const fromRate = isCryptoFrom ? isCryptoFrom.current_price : 1 / exchangeRatesCache[fromCurrency];
+    const toRate = isCryptoTo ? isCryptoTo.current_price : 1 / exchangeRatesCache[toCurrency];
     return fromRate / toRate;
   }
 
   if (!exchangeRatesCache[fromCurrency] || !exchangeRatesCache[toCurrency]) {
-    throw new Error(`No hay datos disponibles para ${fromCurrency} o ${toCurrency}.`);
+    throw new Error(`No se encontraron tasas para ${fromCurrency} o ${toCurrency}`);
   }
 
   return exchangeRatesCache[toCurrency] / exchangeRatesCache[fromCurrency];
@@ -125,6 +86,19 @@ const getCachedExchangeRate = (fromCurrency, toCurrency) => {
   await updateCryptoCurrencies();
   setInterval(updateFiatCurrencies, 30 * 1000); // 30 segundos
   setInterval(updateCryptoCurrencies, 30 * 1000); // 30 segundos
+})();
+
+// Limpieza y actualización automática de la caché cada segundo
+setInterval(async () => {
+  clearCache();
+  await updateExchangeRates();
+  await updateCryptoRates();
+}, 20 * 1000); // Cada segundo
+
+// Actualizar la caché al iniciar el servidor
+(async () => {
+  await updateExchangeRates();
+  await updateCryptoRates();
 })();
 
 module.exports = {
