@@ -1,6 +1,5 @@
 const axios = require('axios');
 
-// Inicialización de la caché
 let cryptoRatesCache = {};
 let exchangeRatesCache = {};
 
@@ -83,14 +82,14 @@ const getCachedExchangeRate = (fromCurrency, toCurrency) => {
   return exchangeRatesCache[toCurrency] / exchangeRatesCache[fromCurrency];
 };
 
-// Limpieza y actualización automática de la caché cada 30 segundos
+// Limpieza y actualización automática de la caché cada segundo
 setInterval(async () => {
   clearCache();
   await updateExchangeRates();
   await updateCryptoRates();
-}, 30 * 1000);
+}, 20 * 1000); // Cada segundo
 
-// Inicializar la caché al iniciar el servidor
+// Actualizar la caché al iniciar el servidor
 (async () => {
   await updateExchangeRates();
   await updateCryptoRates();
