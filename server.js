@@ -1,9 +1,8 @@
 const express = require('express');
-const morgan = require('morgan');
-const path = require('path');
-require('dotenv').config();
-
 const app = express();
+const path = require('path');
+const morgan = require('morgan');
+require('dotenv').config();
 
 // Middleware
 app.use(morgan('dev'));
@@ -15,8 +14,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'src/views'));
 
-// Rutas
-app.use('/', require('./app'));
+// Importar rutas
+const routes = require('./routes'); // Asegúrate de que esta ruta sea correcta
+app.use('/', routes); // Usa las rutas correctamente
 
 // Puerto
 const PORT = process.env.PORT || 3000;

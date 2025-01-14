@@ -38,3 +38,19 @@ block content
     .result
       h3 Resultado
       p= result
+
+  if fromDetails
+    h3 Información de la moneda de origen
+    ul
+      li Nombre: #{fromDetails.name}
+      li Precio actual: $#{fromDetails.current_price}
+      li Capitalización de mercado: $#{fromDetails.market_cap}
+      li Volumen de trading: $#{fromDetails.total_volume}
+
+  if toDetails
+    h3 Información de la moneda de destino
+    ul
+      li Nombre: #{toDetails.name}
+      li Precio actual: $#{toDetails.current_price}
+      li Capitalización de mercado: $#{toDetails.market_cap}
+      li Volumen de trading: $#{toDetails.total_volume}
