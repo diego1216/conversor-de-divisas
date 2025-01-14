@@ -1,21 +1,28 @@
 const axios = require('axios');
 
+// Inicialización de la caché
 let cryptoRatesCache = {};
 let exchangeRatesCache = {};
 
+// Limpia la caché
+const clearCache = () => {
+  cryptoRatesCache = {};
+  exchangeRatesCache = {};
+  console.log('La caché ha sido limpiada.');
+};
 
 // Actualizar tasas de cambio de criptomonedas
 const updateCryptoRates = async () => {
-
   try {
     console.log('Iniciando actualización de criptomonedas...');
     const response = await axios.get('https://api.coingecko.com/api/v3/coins/markets', {
       params: { vs_currency: 'usd', per_page: 50 },
     });
+
+    // Actualiza la caché de criptomonedas
     cryptoRatesCache = response.data.reduce((acc, coin) => {
       acc[coin.symbol.toUpperCase()] = {
         name: coin.name,
-
         current_price: coin.current_price,
         market_cap: coin.market_cap,
         total_volume: coin.total_volume,
@@ -23,18 +30,18 @@ const updateCryptoRates = async () => {
       return acc;
     }, {});
     console.log('Actualización de criptomonedas completada.');
-
   } catch (error) {
     console.error('Error al actualizar criptomonedas:', error.message);
   }
 };
-
 
 // Actualizar tasas de cambio de monedas tradicionales
 const updateExchangeRates = async () => {
   try {
     console.log('Iniciando actualización de monedas tradicionales...');
     const response = await axios.get('https://api.exchangerate-api.com/v4/latest/USD');
+
+    // Actualiza la caché de monedas tradicionales
     exchangeRatesCache = response.data.rates;
     console.log('Actualización de monedas tradicionales completada.');
   } catch (error) {
@@ -54,7 +61,6 @@ const getCachedCurrencies = () => {
     name: key.toUpperCase(),
     rate: exchangeRatesCache[key],
   }));
-
 
   return { cryptocurrencies, fiatCurrencies };
 };
@@ -77,23 +83,20 @@ const getCachedExchangeRate = (fromCurrency, toCurrency) => {
   return exchangeRatesCache[toCurrency] / exchangeRatesCache[fromCurrency];
 };
 
-
-// Actualizar la caché cada 30 segundos
+// Limpieza y actualización automática de la caché cada 30 segundos
 setInterval(async () => {
-  console.log('Actualizando caché de monedas tradicionales...');
+  clearCache();
   await updateExchangeRates();
-}, 30 * 1000);
-
-setInterval(async () => {
-  console.log('Actualizando caché de criptomonedas...');
   await updateCryptoRates();
 }, 30 * 1000);
 
-// Actualizar la caché al iniciar el servidor
+// Inicializar la caché al iniciar el servidor
 (async () => {
-  await updateCryptoRates();
   await updateExchangeRates();
+  await updateCryptoRates();
 })();
 
-
-module.exports = { getCachedCurrencies, getCachedExchangeRate, updateCryptoRates };
+module.exports = {
+  getCachedCurrencies,
+  getCachedExchangeRate,
+};

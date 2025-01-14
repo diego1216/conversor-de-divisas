@@ -1,11 +1,10 @@
 const express = require('express');
-const { getCachedCurrencies, getCachedExchangeRate, updateCryptoRates } = require('./src/services/cacheService');
+const { getCachedCurrencies, getCachedExchangeRate } = require('./src/services/cacheService');
 const router = express.Router();
 
 // Página principal
-router.get('/', async (req, res) => {
+router.get('/', (req, res) => {
   try {
-    await updateCryptoRates(); // Actualizar datos de criptomonedas antes de renderizar la página
     const { cryptocurrencies, fiatCurrencies } = getCachedCurrencies();
     res.render('index', {
       title: 'Conversor de Divisas y Criptomonedas',
