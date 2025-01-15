@@ -17,6 +17,9 @@ server.set('view engine', 'pug');
 const routes = require('./src/routes');
 app.use('/', routes);
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes

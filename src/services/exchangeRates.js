@@ -74,7 +74,11 @@ const getExchangeRate = async (fromCurrency, toCurrency) => {
   } catch (error) {
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     console.error('Error al obtener el tipo de cambio:', error.message);
+=======
+    console.error(Error al obtener el tipo de cambio entre ${fromCurrency} y ${toCurrency}:, error.message);
+>>>>>>> Stashed changes
 =======
     console.error(Error al obtener el tipo de cambio entre ${fromCurrency} y ${toCurrency}:, error.message);
 >>>>>>> Stashed changes
@@ -190,6 +194,10 @@ const getFiatToCryptoRate = async (fiatSymbol, cryptoSymbol) => {
 };
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+module.exports = { getExchangeRate };
+>>>>>>> Stashed changes
+=======
 module.exports = { getExchangeRate };
 >>>>>>> Stashed changes
 =======
