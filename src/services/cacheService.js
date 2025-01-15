@@ -81,6 +81,12 @@ const getCachedExchangeRate = (fromCurrency, toCurrency) => {
 
   return exchangeRatesCache[toCurrency] / exchangeRatesCache[fromCurrency];
 };
+(async () => {
+  await updateFiatCurrencies();
+  await updateCryptoCurrencies();
+  setInterval(updateFiatCurrencies, 30 * 1000); // 30 segundos
+  setInterval(updateCryptoCurrencies, 30 * 1000); // 30 segundos
+})();
 
 // Limpieza y actualización automática de la caché cada segundo
 setInterval(async () => {
