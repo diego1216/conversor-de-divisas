@@ -16,6 +16,9 @@ server.set('view engine', 'pug');
 // Importar rutas
 const routes = require('./src/routes');
 app.use('/', routes);
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 // Servir archivos estáticos

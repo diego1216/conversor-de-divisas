@@ -1,6 +1,7 @@
 const axios = require('axios'); // Importa la librería axios para realizar solicitudes HTTP.
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 let cryptoRatesCache = {}; // Declara un objeto para almacenar las tasas de cambio de las criptomonedas en caché.
 
 const fetchCryptoRates = async (page = 1) => { // Define una función asíncrona para obtener tasas de criptomonedas por página.
@@ -47,6 +48,8 @@ module.exports = {
   cryptoRatesCache, // Exporta el objeto `cryptoRatesCache` para que pueda ser utilizado en otros módulos.
   updateCryptoRates, // Exporta la función `updateCryptoRates` para que pueda ser llamada desde otros módulos.
 =======
+=======
+>>>>>>> Stashed changes
 // Variables para almacenar en caché
 let cryptoRatesCache = {};
 let exchangeRatesCache = {};
