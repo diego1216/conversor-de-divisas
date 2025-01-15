@@ -6,7 +6,8 @@
     "scripts": {
         "start": "node server.js",
         "dev": "nodemon server.js",
-        "sass": "sass --watch src/sass/styles.scss:public/css/styles.css"
+        "sass": "sass src/sass/styles.sass:public/css/styles.css",
+        "sass-watch":"sass --watch src/sass/styles.sass:public/css/styles.css"
     },
     "dependencies": {
         "axios": "^1.4.0",
