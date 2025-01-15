@@ -8,15 +8,13 @@ block content
     .form-row
       .form-group
         label(for="amount") Cantidad
-        input#amount(type="number" name="amount" placeholder="Ingresa la cantidad" required maxlength="19" oninput="if(this.value.length > 19) this.value = this.value.slice(0, 19)" )
-        
-        
+        input#amount(type="number" name="amount" placeholder="Ingresa la cantidad" required)
 
     .form-row
       .form-group
         label Desde la Divisa
         select(name="fromCurrency" required)
-          option(value="" disabled selected) Selecciona la divisa
+          option(value="" disabled selected) Selecciona la primera divisa
           optgroup(label="Criptomonedas")
             each crypto in cryptocurrencies
               option(value=crypto.symbol) #{crypto.name} (#{crypto.symbol})
@@ -27,7 +25,7 @@ block content
       .form-group
         label A la Divisa
         select(name="toCurrency" required)
-          option(value="" disabled selected) Selecciona la divisa
+          option(value="" disabled selected) Selecciona la primera divisa
           optgroup(label="Criptomonedas")
             each crypto in cryptocurrencies
               option(value=crypto.symbol) #{crypto.name} (#{crypto.symbol})
@@ -58,3 +56,45 @@ block content
       li Precio actual: $#{toDetails.current_price}
       li Capitalización de mercado: $#{toDetails.market_cap}
       li Volumen de trading: $#{toDetails.total_volume}
+      
+  h3 Seleccione las divisas que desea comparar
+  form.compare-form(action="/compare" method="POST")
+    .form-row
+      .form-group
+        label Seleccionar divisa 1
+        select(name="currencyA" required)
+          option(value="" disabled selected) Selecciona la primera divisa
+          optgroup(label="Criptomonedas")
+            each crypto in cryptocurrencies
+              option(value=crypto.symbol) #{crypto.name} (#{crypto.symbol})
+          optgroup(label="Monedas Tradicionales")
+            each fiat in fiatCurrencies
+              option(value=fiat.symbol) #{fiat.name} (#{fiat.symbol})
+      .form-group
+        label Seleccionar divisa 2
+        select(name="currencyB" required)
+          option(value="" disabled selected) Selecciona la segunda divisa
+          optgroup(label="Criptomonedas")
+            each crypto in cryptocurrencies
+              option(value=crypto.symbol) #{crypto.name} (#{crypto.symbol})
+          optgroup(label="Monedas Tradicionales")
+            each fiat in fiatCurrencies
+              option(value=fiat.symbol) #{fiat.name} (#{fiat.symbol})
+    .form-row
+      button.compare-button(type="submit") Comparar
+
+  if comparison
+    .comparison
+      h3 Información de las Divisas
+      .comparison-section
+        .comparison-item
+          h4= comparison.currencyA.name
+          p Precio Actual: $#{comparison.currencyA.current_price || 'N/A'}
+          p Capitalización de Mercado: $#{comparison.currencyA.market_cap || 'N/A'}
+          p Volumen Total: $#{comparison.currencyA.total_volume || 'N/A'}
+        .comparison-item
+          h4= comparison.currencyB.name
+          p Precio Actual: $#{comparison.currencyB.current_price || 'N/A'}
+          p Capitalización de Mercado: $#{comparison.currencyB.market_cap || 'N/A'}
+          p Volumen Total: $#{comparison.currencyB.total_volume || 'N/A'}
+
