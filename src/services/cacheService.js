@@ -3,14 +3,6 @@ const axios = require('axios');
 let cryptoRatesCache = {};
 let exchangeRatesCache = {};
 
-// Limpia la caché
-const clearCache = () => {
-  cryptoRatesCache = {};
-  exchangeRatesCache = {};
-  console.log('La caché ha sido limpiada.');
-};
-
-// Actualizar tasas de cambio de criptomonedas
 const updateCryptoRates = async () => {
   try {
     console.log('Iniciando actualización de criptomonedas...');
@@ -19,8 +11,10 @@ const updateCryptoRates = async () => {
     });
 
     // Actualiza la caché de criptomonedas
+
     cryptoRatesCache = response.data.reduce((acc, coin) => {
       acc[coin.symbol.toUpperCase()] = {
+        id: coin.id,
         name: coin.name,
         current_price: coin.current_price,
         market_cap: coin.market_cap,
@@ -34,13 +28,10 @@ const updateCryptoRates = async () => {
   }
 };
 
-// Actualizar tasas de cambio de monedas tradicionales
 const updateExchangeRates = async () => {
   try {
     console.log('Iniciando actualización de monedas tradicionales...');
     const response = await axios.get('https://api.exchangerate-api.com/v4/latest/USD');
-
-    // Actualiza la caché de monedas tradicionales
     exchangeRatesCache = response.data.rates;
     console.log('Actualización de monedas tradicionales completada.');
   } catch (error) {
@@ -48,7 +39,6 @@ const updateExchangeRates = async () => {
   }
 };
 
-// Obtener tasas de cambio almacenadas
 const getCachedCurrencies = () => {
   const cryptocurrencies = Object.keys(cryptoRatesCache).map((key) => ({
     symbol: key,
@@ -64,7 +54,6 @@ const getCachedCurrencies = () => {
   return { cryptocurrencies, fiatCurrencies };
 };
 
-// Obtener tasa de cambio
 const getCachedExchangeRate = (fromCurrency, toCurrency) => {
   const isCryptoFrom = cryptoRatesCache[fromCurrency];
   const isCryptoTo = cryptoRatesCache[toCurrency];
@@ -82,17 +71,11 @@ const getCachedExchangeRate = (fromCurrency, toCurrency) => {
   return exchangeRatesCache[toCurrency] / exchangeRatesCache[fromCurrency];
 };
 
-// Limpieza y actualización automática de la caché cada 20 segundos
-setInterval(async () => {
-  clearCache();
-  await updateExchangeRates();
-  await updateCryptoRates();
-}, 30 * 1000); // Cada 30 segundos
-
-// Actualizar la caché al iniciar el servidor
 (async () => {
   await updateExchangeRates();
   await updateCryptoRates();
+  setInterval(updateExchangeRates, 30 * 1000);
+  setInterval(updateCryptoRates, 30 * 1000);
 })();
 
 module.exports = {

@@ -1,9 +1,6 @@
-const express = require('express');
-const { getCachedCurrencies, getCachedExchangeRate } = require('./src/services/cacheService');
-const router = express.Router();
+const { getCachedCurrencies, getCachedExchangeRate } = require('../models/cacheModel');
 
-// Página principal
-router.get('/', (req, res) => {
+const renderHome = (req, res) => {
   try {
     const { cryptocurrencies, fiatCurrencies } = getCachedCurrencies();
     res.render('index', {
@@ -16,10 +13,9 @@ router.get('/', (req, res) => {
     console.error('Error al cargar las opciones:', error.message);
     res.render('error', { message: 'No se pudieron cargar las opciones de conversión.' });
   }
-});
+};
 
-// Conversión
-router.post('/convert', (req, res) => {
+const convertCurrency = (req, res) => {
   const { amount, fromCurrency, toCurrency } = req.body;
   try {
     const rate = getCachedExchangeRate(fromCurrency, toCurrency);
@@ -44,16 +40,14 @@ router.post('/convert', (req, res) => {
     console.error('Error al convertir:', error.message);
     res.render('error', { message: error.message });
   }
-});
+};
 
-// Comparar divisas
-router.post('/compare', (req, res) => {
+const compareCurrencies = (req, res) => {
   const { currencyA, currencyB } = req.body;
 
   try {
     const { cryptocurrencies, fiatCurrencies } = getCachedCurrencies();
 
-    // Buscar las divisas seleccionadas
     const currencyADetails =
       cryptocurrencies.find((crypto) => crypto.symbol === currencyA) ||
       fiatCurrencies.find((fiat) => fiat.symbol === currencyA);
@@ -76,7 +70,10 @@ router.post('/compare', (req, res) => {
     console.error('Error al comparar las divisas:', error.message);
     res.render('error', { message: 'Ocurrió un error al comparar las divisas.' });
   }
-});
+};
 
-
-module.exports = router;
+module.exports = {
+  renderHome,
+  convertCurrency,
+  compareCurrencies,
+};
