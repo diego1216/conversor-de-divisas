@@ -87,7 +87,7 @@ setInterval(async () => {
   clearCache();
   await updateExchangeRates();
   await updateCryptoRates();
-}, 20 * 1000); // Cada 20 segundos
+}, 30 * 1000); // Cada 30 segundos
 
 // Actualizar la caché al iniciar el servidor
 (async () => {
