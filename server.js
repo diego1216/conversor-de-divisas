@@ -8,9 +8,15 @@ const PORT = process.env.PORT || 3002;
 
 const server = express();
 
+<<<<<<< Updated upstream
 // Configurar el directorio de vistas y el motor de plantillas
 server.set('views', path.join(__dirname, 'src/views')); // Ruta de las vistas
 server.set('view engine', 'pug');
+=======
+// Importar rutas
+const routes = require('./src/routes');
+app.use('/', routes);
+>>>>>>> Stashed changes
 
 // Servir archivos estáticos
 server.use(express.static(path.join(__dirname, 'public')));

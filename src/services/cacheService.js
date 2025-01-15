@@ -1,5 +1,6 @@
 const axios = require('axios'); // Importa la librería axios para realizar solicitudes HTTP.
 
+<<<<<<< Updated upstream
 let cryptoRatesCache = {}; // Declara un objeto para almacenar las tasas de cambio de las criptomonedas en caché.
 
 const fetchCryptoRates = async (page = 1) => { // Define una función asíncrona para obtener tasas de criptomonedas por página.
@@ -45,4 +46,113 @@ const updateCryptoRates = async () => { // Define una función asíncrona para a
 module.exports = {
   cryptoRatesCache, // Exporta el objeto `cryptoRatesCache` para que pueda ser utilizado en otros módulos.
   updateCryptoRates, // Exporta la función `updateCryptoRates` para que pueda ser llamada desde otros módulos.
+=======
+// Variables para almacenar en caché
+let cryptoRatesCache = {};
+let exchangeRatesCache = {};
+
+// Función para limpiar la caché
+const clearCache = () => {
+  cryptoRatesCache = {};
+  exchangeRatesCache = {};
+  console.log('La caché ha sido limpiada.');
+};
+
+// Función para actualizar las tasas de criptomonedas
+const updateCryptoRates = async () => {
+  try {
+    console.log('Iniciando actualización de tasas de criptomonedas...');
+    const response = await axios.get('https://api.coingecko.com/api/v3/coins/markets', {
+      params: { vs_currency: 'usd', per_page: 50 },
+    });
+
+    // Actualizar la caché de criptomonedas
+    cryptoRatesCache = response.data.reduce((acc, coin) => {
+      acc[coin.symbol.toUpperCase()] = {
+        id: coin.id,
+        name: coin.name,
+        current_price: coin.current_price,
+        market_cap: coin.market_cap,
+        total_volume: coin.total_volume,
+      };
+      return acc;
+    }, {});
+    console.log('Tasas de criptomonedas actualizadas.');
+  } catch (error) {
+    console.error('Error al actualizar tasas de criptomonedas:', error.message);
+  }
+};
+
+// Función para actualizar las tasas de monedas tradicionales
+const updateExchangeRates = async () => {
+  try {
+    console.log('Iniciando actualización de tasas de monedas tradicionales...');
+    const response = await axios.get('https://api.exchangerate-api.com/v4/latest/USD');
+
+    // Actualizar la caché de monedas tradicionales
+    exchangeRatesCache = response.data.rates;
+    console.log('Tasas de monedas tradicionales actualizadas.');
+  } catch (error) {
+    console.error('Error al actualizar tasas de monedas tradicionales:', error.message);
+  }
+};
+
+// Obtener las tasas de cambio desde la caché
+const getCachedCurrencies = () => {
+  const cryptocurrencies = Object.keys(cryptoRatesCache).map((key) => ({
+    symbol: key,
+    ...cryptoRatesCache[key],
+  }));
+
+  const fiatCurrencies = Object.keys(exchangeRatesCache).map((key) => ({
+    symbol: key,
+    name: key.toUpperCase(),
+    rate: exchangeRatesCache[key],
+  }));
+
+  return { cryptocurrencies, fiatCurrencies };
+};
+
+// Obtener la tasa de cambio entre dos monedas desde la caché
+const getCachedExchangeRate = (fromCurrency, toCurrency) => {
+  const isCryptoFrom = cryptoRatesCache[fromCurrency];
+  const isCryptoTo = cryptoRatesCache[toCurrency];
+
+  if (isCryptoFrom || isCryptoTo) {
+    const fromRate = isCryptoFrom ? isCryptoFrom.current_price : 1 / exchangeRatesCache[fromCurrency];
+    const toRate = isCryptoTo ? isCryptoTo.current_price : 1 / exchangeRatesCache[toCurrency];
+    return fromRate / toRate;
+  }
+
+  if (!exchangeRatesCache[fromCurrency] || !exchangeRatesCache[toCurrency]) {
+    throw new Error(`No se encontraron tasas de cambio para ${fromCurrency} o ${toCurrency}.`);
+  }
+
+  return exchangeRatesCache[toCurrency] / exchangeRatesCache[fromCurrency];
+};
+
+// Inicializar la caché al iniciar el servidor
+(async () => {
+  console.log('Inicializando la caché...');
+  await updateCryptoRates();
+  await updateExchangeRates();
+
+  // Programar actualizaciones periódicas
+  setInterval(updateCryptoRates, 30 * 1000); // Cada 30 segundos
+  setInterval(updateExchangeRates, 30 * 1000); // Cada 30 segundos
+
+  // Limpiar y actualizar la caché cada 20 minutos
+  setInterval(async () => {
+    clearCache();
+    await updateCryptoRates();
+    await updateExchangeRates();
+  }, 28 * 1000); // Cada 20 segundos
+})();
+
+module.exports = {
+  updateCryptoRates,
+  updateExchangeRates,
+  getCachedCurrencies,
+  getCachedExchangeRate,
+>>>>>>> Stashed changes
 };

@@ -27,4 +27,8 @@ const getPaginatedCryptos = async (page = 1, perPage = 30) => { // Define una fu
   }
 };
 
+<<<<<<< Updated upstream
 module.exports = { getPaginatedCryptos }; // Exporta la función `getPaginatedCryptos` para que pueda ser utilizada en otros módulos.
+=======
+module.exports = { getCryptoDetails };
+>>>>>>> Stashed changes
