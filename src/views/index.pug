@@ -39,7 +39,7 @@ block content
   if result
     .result
       h3 Resultado
-      p= result
+      p=  result
 
   if fromDetails
     h3 Información de la moneda de origen
@@ -97,4 +97,3 @@ block content
           p Precio Actual: $#{comparison.currencyB.current_price || 'N/A'}
           p Capitalización de Mercado: $#{comparison.currencyB.market_cap || 'N/A'}
           p Volumen Total: $#{comparison.currencyB.total_volume || 'N/A'}
-

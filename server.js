@@ -1,25 +1,10 @@
-const express = require('express');
-const app = express();
-const path = require('path');
-const morgan = require('morgan');
-require('dotenv').config();
+const app = require('./app'); // Importa la configuración de la aplicación desde el archivo app.js
 
-// Middleware
-app.use(morgan('dev'));
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Configuración de vistas
-app.set('view engine', 'pug');
-app.set('views', path.join(__dirname, 'src/views'));
-
-// Importar rutas
-const routes = require('./routes'); // Asegúrate de que esta ruta sea correcta
-app.use('/', routes); // Usa las rutas correctamente
-
-// Puerto
+// Define el puerto en el que se ejecutará la aplicación
+// Usa el puerto especificado en las variables de entorno o, si no está definido, el puerto 3000 por defecto
 const PORT = process.env.PORT || 3000;
+
+// Inicia el servidor y escucha en el puerto definido
 app.listen(PORT, () => {
-  console.log(`Servidor ejecutándose en http://localhost:${PORT}`);
+  console.log(`Servidor ejecutándose en http://localhost:${PORT}`); // Muestra un mensaje en la consola indicando que el servidor está en funcionamiento
 });

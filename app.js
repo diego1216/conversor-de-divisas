@@ -1,24 +1,19 @@
-const express = require('express');
-const app = express();
-const path = require('path');
-const morgan = require('morgan');
-require('dotenv').config();
+const express = require('express'); // Importa el módulo de Express para crear la aplicación
+const path = require('path'); // Importa el módulo de Path para manejar rutas de archivos y directorios
+const app = express(); // Crea una instancia de la aplicación Express
+const routes = require('./src/routes'); // Importa las rutas definidas en el directorio src/routes
 
-// Middleware
-app.use(morgan('dev'));
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+// Middlewares
+app.use(express.urlencoded({ extended: true })); // Middleware para procesar datos codificados en URL (formularios)
+app.use(express.json()); // Middleware para procesar datos en formato JSON
+app.use(express.static(path.join(__dirname, 'public'))); // Servir archivos estáticos desde el directorio "public"
 
-// Configuración de vistas
-app.set('view engine', 'pug');
-app.set('views', path.join(__dirname, 'src/views'));
+// Motor de vistas
+app.set('view engine', 'pug'); // Configura Pug como el motor de plantillas para la aplicación
+app.set('views', path.join(__dirname, 'src/views')); // Define el directorio donde se encuentran las vistas
 
 // Rutas
-app.use('/', require('./routes')); // Asegúrate de ajustar la ruta según la ubicación de tu archivo routes.js
+app.use('/', routes); // Define las rutas principales para la aplicación, comenzando desde "/"
 
-// Puerto
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Servidor ejecutándose en http://localhost:${PORT}`);
-});
+// Exporta la instancia de la aplicación para que pueda ser utilizada en otros archivos
+module.exports = app;

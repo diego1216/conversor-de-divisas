@@ -1,30 +1,34 @@
 extends layout
 
 block content
-  h1= title
-  h2 Detalles de las Criptomonedas
+  h1 #{title}
+  h2 #{subtitle}
 
   if cryptos && cryptos.length > 0
     ul.crypto-list
       each crypto in cryptos
         li
           h2 #{crypto.name} (#{crypto.symbol?.toUpperCase() || 'N/A'})
-          p Precio actual: 
+          p 
+            | Precio actual: 
             if crypto.current_price
               | $#{crypto.current_price.toLocaleString()}
             else
               | No disponible
-          p Capitalización de mercado: 
+          p 
+            | Capitalización de mercado: 
             if crypto.market_cap
               | $#{crypto.market_cap.toLocaleString()}
             else
               | No disponible
-          p Volumen de trading (24h): 
+          p 
+            | Volumen de trading (24h): 
             if crypto.total_volume
               | $#{crypto.total_volume.toLocaleString()}
             else
               | No disponible
-          p Cambio en 24h: 
+          p 
+            | Cambio en 24h: 
             if typeof crypto.price_change_percentage_24h !== 'undefined' && crypto.price_change_percentage_24h !== null
               | #{crypto.price_change_percentage_24h.toFixed(2)}%
             else
@@ -32,6 +36,7 @@ block content
   else
     p No hay datos disponibles para las criptomonedas.
 
-  // Bloque para depuración de datos en crudo
-  pre Datos en bruto:
-    code= JSON.stringify(cryptos, null, 2)
+  // Bloque opcional para depuración de datos en crudo
+  if rawData
+    pre Datos en bruto:
+      code= JSON.stringify(rawData, null, 2)

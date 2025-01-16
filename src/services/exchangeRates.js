@@ -1,126 +1,89 @@
-const axios = require('axios');
-const { getCachedCurrencies } = require('./cacheService');
-
-// Obtener tasa de cambio entre dos monedas
-const getExchangeRate = async (fromCurrency, toCurrency) => {
-  try {
-    const { cryptocurrencies, fiatCurrencies } = getCachedCurrencies();
-
-    // Verificar si las monedas son criptomonedas
-    const isCryptoFrom = cryptocurrencies.find((crypto) => crypto.symbol === fromCurrency.toUpperCase());
-    const isCryptoTo = cryptocurrencies.find((crypto) => crypto.symbol === toCurrency.toUpperCase());
-
-    if (isCryptoFrom || isCryptoTo) {
-      return await handleCryptoExchangeRate(fromCurrency, toCurrency);
-    }
-
-    // Si ambas son monedas tradicionales
-    return await handleFiatExchangeRate(fromCurrency, toCurrency);
-  } catch (error) {
-    console.error(`Error al obtener el tipo de cambio entre ${fromCurrency} y ${toCurrency}:`, error.message);
-    throw error;
-  }
-};
-
-// Manejar conversión entre criptomonedas y monedas tradicionales
-const handleCryptoExchangeRate = async (fromCurrency, toCurrency) => {
-  const cryptoMap = {};
-  const { cryptocurrencies } = getCachedCurrencies();
-
-  // Crear un mapa de criptomonedas para obtener sus IDs
-  cryptocurrencies.forEach((crypto) => {
-    cryptoMap[crypto.symbol] = crypto.id;
-  });
-
-  const fromIsCrypto = cryptoMap[fromCurrency];
-  const toIsCrypto = cryptoMap[toCurrency];
-
-  if (fromIsCrypto && toIsCrypto) {
-    // Ambas son criptomonedas: calcular conversión indirecta usando USD
-    const fromRate = await getCryptoPriceInUSD(fromCurrency);
-    const toRate = await getCryptoPriceInUSD(toCurrency);
-
-    if (!fromRate || !toRate) {
-      throw new Error(`No se encontraron tasas de cambio para ${fromCurrency} o ${toCurrency}.`);
-    }
-
-    return fromRate / toRate;
-  }
-
-  if (fromIsCrypto && !toIsCrypto) {
-    // De criptomoneda a moneda tradicional
-    return await getCryptoToFiatRate(fromCurrency, toCurrency);
-  }
-
-  if (!fromIsCrypto && toIsCrypto) {
-    // De moneda tradicional a criptomoneda
-    return await getFiatToCryptoRate(fromCurrency, toCurrency);
-  }
-};
-
-// Manejar conversión entre monedas tradicionales
-const handleFiatExchangeRate = async (fromCurrency, toCurrency) => {
-  try {
-    const { fiatCurrencies } = getCachedCurrencies();
-    const fiatSymbols = fiatCurrencies.map((fiat) => fiat.symbol);
-
-    if (!fiatSymbols.includes(fromCurrency) || !fiatSymbols.includes(toCurrency)) {
-      throw new Error(`No se encontraron tasas de cambio para ${fromCurrency} o ${toCurrency}.`);
-    }
-
-    // Obtener tasa de cambio de una API
-    const response = await axios.get(`https://open.er-api.com/v6/latest/${fromCurrency}`);
-    const rate = response.data.rates[toCurrency];
-    if (!rate) {
-      throw new Error(`No se encontró un tipo de cambio para ${fromCurrency} a ${toCurrency}`);
-    }
-    return rate;
-  } catch (error) {
-    console.error('Error al manejar conversión de monedas tradicionales:', error.message);
-    throw error;
-  }
-};
+const axios = require('axios'); // Importa el módulo axios para realizar solicitudes HTTP
+const { getCachedCurrencies } = require('../models/cacheModel'); // Importa la función para obtener datos almacenados en caché
 
 // Obtener precio en USD para una criptomoneda
 const getCryptoPriceInUSD = async (cryptoSymbol) => {
+  // Obtiene las criptomonedas almacenadas en caché
   const { cryptocurrencies } = getCachedCurrencies();
+  // Busca la criptomoneda específica por su símbolo
   const crypto = cryptocurrencies.find((c) => c.symbol === cryptoSymbol.toUpperCase());
 
+  // Lanza un error si no se encuentra la criptomoneda
   if (!crypto) {
     throw new Error(`No se encontró información para la criptomoneda ${cryptoSymbol}.`);
   }
 
+  // Realiza una solicitud a la API para obtener el precio en USD
   const response = await axios.get(
     `https://api.coingecko.com/api/v3/simple/price?ids=${crypto.id}&vs_currencies=usd`
   );
 
+  // Retorna el precio en USD o null si no se encuentra
   return response.data[crypto.id]?.usd || null;
 };
 
 // Obtener tasa de cambio de criptomoneda a moneda tradicional
 const getCryptoToFiatRate = async (cryptoSymbol, fiatSymbol) => {
+  // Obtiene el precio de la criptomoneda en USD
   const priceInUSD = await getCryptoPriceInUSD(cryptoSymbol);
+  // Realiza una solicitud para obtener las tasas de cambio desde USD
   const response = await axios.get(`https://open.er-api.com/v6/latest/USD`);
-  const fiatRate = response.data.rates[fiatSymbol];
+  const fiatRate = response.data.rates[fiatSymbol]; // Obtiene la tasa de cambio para la moneda fiat
 
+  // Lanza un error si no se encuentra la tasa de cambio para la moneda fiat
   if (!fiatRate) {
     throw new Error(`No se encontró información para la moneda ${fiatSymbol}.`);
   }
 
+  // Calcula y retorna la tasa de cambio
   return priceInUSD * fiatRate;
 };
 
 // Obtener tasa de cambio de moneda tradicional a criptomoneda
 const getFiatToCryptoRate = async (fiatSymbol, cryptoSymbol) => {
+  // Realiza una solicitud para obtener las tasas de cambio desde la moneda fiat
   const response = await axios.get(`https://open.er-api.com/v6/latest/${fiatSymbol}`);
-  const rateToUSD = response.data.rates['USD'];
+  const rateToUSD = response.data.rates['USD']; // Obtiene la tasa de cambio hacia USD
+  // Obtiene el precio de la criptomoneda en USD
   const priceInUSD = await getCryptoPriceInUSD(cryptoSymbol);
 
+  // Lanza un error si no se encuentra la información necesaria
   if (!rateToUSD || !priceInUSD) {
     throw new Error(`No se encontró información para la conversión de ${fiatSymbol} a ${cryptoSymbol}.`);
   }
 
+  // Calcula y retorna la tasa de cambio
   return rateToUSD / priceInUSD;
 };
 
-module.exports = { getExchangeRate };
+// Manejar conversión entre monedas tradicionales
+const handleFiatExchangeRate = async (fromCurrency, toCurrency) => {
+  // Obtiene las monedas fiat almacenadas en caché
+  const { fiatCurrencies } = getCachedCurrencies();
+  const fiatSymbols = fiatCurrencies.map((fiat) => fiat.symbol); // Extrae los símbolos de las monedas fiat
+
+  // Lanza un error si alguna de las monedas no está en la lista
+  if (!fiatSymbols.includes(fromCurrency) || !fiatSymbols.includes(toCurrency)) {
+    throw new Error(`No se encontraron tasas de cambio para ${fromCurrency} o ${toCurrency}.`);
+  }
+
+  // Realiza una solicitud para obtener las tasas de cambio desde la moneda origen
+  const response = await axios.get(`https://open.er-api.com/v6/latest/${fromCurrency}`);
+  const rate = response.data.rates[toCurrency]; // Obtiene la tasa de cambio hacia la moneda destino
+
+  // Lanza un error si no se encuentra la tasa de cambio
+  if (!rate) {
+    throw new Error(`No se encontró un tipo de cambio para ${fromCurrency} a ${toCurrency}`);
+  }
+
+  // Retorna la tasa de cambio
+  return rate;
+};
+
+// Exporta las funciones para que puedan ser utilizadas en otros módulos
+module.exports = {
+  getCryptoPriceInUSD,
+  getCryptoToFiatRate,
+  getFiatToCryptoRate,
+  handleFiatExchangeRate,
+};
