@@ -18,35 +18,44 @@
 2. Ingresa la cantidad, moneda de origen y destino.
 3. Visualiza el resultado de la conversión.
 
-currency-converter/
+conversor-de-divisas/
+├── node_modules/                 # Dependencias de Node.js
 ├── public/                       # Archivos estáticos
 │   ├── css/
-│   │   ├── styles.css
-│   │   └── styles.css.map
+│   │   ├── styles.css            # Estilos CSS compilados
+│   │   └── styles.css.map        # Mapa fuente para estilos
 │   ├── js/
-│   │   └── main.js
+│   │   └── main.js               # Código JavaScript del frontend
 ├── src/
-│   ├── controllers/              # Lógica de las rutas
+│   ├── controllers/              # Controladores para manejar la lógica de rutas
+│   │   ├── comparisonController.js
 │   │   ├── conversionController.js
-│   │   └── comparisonController.js
-│   ├── models/                   # Lógica del negocio
+│   │   ├── cryptoController.js
+│   │   └── exchangeController.js
+│   ├── models/                   # Modelos para lógica del negocio
+│   │   ├── cacheModel.js
+│   │   ├── cryptoModel.js
 │   │   ├── currencyModel.js
-│   │   └── cryptoModel.js
-│   ├── services/                 # Servicios externos o caché
+│   │   └── exchangeModel.js
+│   ├── services/                 # Servicios para API externas o lógica reutilizable
 │   │   ├── cacheService.js
 │   │   ├── cryptoService.js
 │   │   └── exchangeRates.js
-│   ├── views/                    # Plantillas Pug
+│   ├── routes/                   # Definición de rutas
+│   │   ├── comparisonRoutes.js
+│   │   ├── conversionRoutes.js
+│   │   ├── exchangeRoutes.js
+│   │   └── index.js
+│   ├── views/                    # Plantillas para renderización con Pug
 │   │   ├── cryptoDetails.pug
 │   │   ├── error.pug
 │   │   ├── index.pug
 │   │   └── layout.pug
-│   ├── routes/                   # Rutas principales
-│   │   └── index.js
-│   └── sass/
-│       └── styles.scss           # Archivos Sass
+│   ├── sass/
+│   │   └── styles.scss           # Archivo Sass para estilos
 ├── .env                          # Variables de entorno
-├── app.js                        # Configuración inicial de la app
+├── app.js                        # Configuración principal de la aplicación
 ├── server.js                     # Arranque del servidor
-├── package.json                  # Dependencias y scripts
+├── package.json                  # Dependencias y scripts del proyecto
+├── package-lock.json             # Versiones exactas de las dependencias
 ├── README.md                     # Documentación del proyecto
