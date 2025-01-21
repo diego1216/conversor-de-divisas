@@ -72,6 +72,6 @@ Morgan - Para registro de solicitudes HTTP.
 Node-Cron - Para programar tareas automáticas.
 Pug - Para plantillas dinámicas.
 Nodemon - Para reinicios automáticos durante el desarrollo.
-Sass (deberías instalarlo manualmente si no está en las dependencias).
+Sass - para compilar estilos.
 
 api ->  services -> models -> controllers -> views

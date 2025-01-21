@@ -46,7 +46,7 @@ const convertCurrency = (req, res) => {
     // Renderiza la vista 'index' con los datos de la conversión
     res.render('index', {
       title: 'Conversor de Divisas y Criptomonedas', // Título de la página
-      subtitle: 'Convierte entre monedas tradicionales y criptomonedas', // Subtítulo de la página
+      subtitle: 'Convierte entre monedas tradicionales y criptomonedas ( los valores se actualizan cada 10 minutos y los valores están usd)', // Subtítulo de la página
       cryptocurrencies, // Lista de criptomonedas
       fiatCurrencies, // Lista de monedas tradicionales
       result: `${amount} ${fromCurrency} = ${result} ${toCurrency}`, // Resultado de la conversión
@@ -82,7 +82,7 @@ const compareCurrencies = (req, res) => {
     // Renderiza la vista 'index' con los datos de comparación
     res.render('index', {
       title: 'Conversor de Divisas y Criptomonedas', // Título de la página
-      subtitle: 'Convierte entre monedas tradicionales y criptomonedas', // Subtítulo de la página
+      subtitle: 'Convierte entre monedas tradicionales y criptomonedas ( los valores se actualizan cada 10 minutos y los valores están usd)', // Subtítulo de la página
       cryptocurrencies, // Lista de criptomonedas
       fiatCurrencies, // Lista de monedas tradicionales
       comparison: {
