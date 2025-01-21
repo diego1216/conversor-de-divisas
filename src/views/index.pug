@@ -25,7 +25,7 @@ block content
       .form-group
         label A la Divisa
         select(name="toCurrency" required)
-          option(value="" disabled selected) Selecciona la primera divisa
+          option(value="" disabled selected) Selecciona la segunda divisa
           optgroup(label="Criptomonedas")
             each crypto in cryptocurrencies
               option(value=crypto.symbol) #{crypto.name} (#{crypto.symbol})
