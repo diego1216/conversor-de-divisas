@@ -63,4 +63,15 @@ conversor-de-divisas/
 ├── README.md                     # Documentación del proyecto
 
 
+plugins:
+
+Axios - Para llamadas API.
+Dotenv - Para manejo de variables de entorno.
+Express - Framework de servidor.
+Morgan - Para registro de solicitudes HTTP.
+Node-Cron - Para programar tareas automáticas.
+Pug - Para plantillas dinámicas.
+Nodemon - Para reinicios automáticos durante el desarrollo.
+Sass (deberías instalarlo manualmente si no está en las dependencias).
+
 api ->  services -> models -> controllers -> views
