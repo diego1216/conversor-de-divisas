@@ -61,3 +61,6 @@ conversor-de-divisas/
 ├── package.json                  # Dependencias y scripts del proyecto
 ├── package-lock.json             # Versiones exactas de las dependencias
 ├── README.md                     # Documentación del proyecto
+
+
+api ->  services -> models -> controllers -> views
