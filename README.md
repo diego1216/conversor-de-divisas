@@ -17,7 +17,8 @@
 1. Accede a `http://localhost:3000`.
 2. Ingresa la cantidad, moneda de origen y destino.
 3. Visualiza el resultado de la conversión.
-   nota:  la aplicación tarda 10 minutos en actualizar los datos de las cryptomonedas 
+
+nota:  la aplicación tarda 10 minutos en actualizar los datos de las cryptomonedas 
 
 conversor-de-divisas/
 ├── node_modules/                 # Dependencias de Node.js
@@ -53,7 +54,7 @@ conversor-de-divisas/
 │   │   ├── index.pug
 │   │   └── layout.pug
 │   ├── sass/
-│   │   └── styles.scss           # Archivo Sass para estilos
+│   │   └── styles.sass           # Archivo Sass para estilos
 ├── .env                          # Variables de entorno
 ├── app.js                        # Configuración principal de la aplicación
 ├── server.js                     # Arranque del servidor
