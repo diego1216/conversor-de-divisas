@@ -16,7 +16,7 @@
 ## Uso
 1. Accede a `http://localhost:3000`.
 2. Ingresa la cantidad, moneda de origen y destino.
-3. Visualiza el resultado de la conversión.
+3. Visualiza el resultado de la conversión o comparación.
 
 nota:  la aplicación tarda 10 minutos en actualizar los datos de las cryptomonedas 
 
