@@ -22,8 +22,7 @@ const handleComparison = (req, res) => {
 
     // Renderiza la vista 'index' pasando los datos necesarios
     res.render('index', {
-      title: 'Comparación de Divisas y Criptomonedas', // Título de la página
-      subtitle: 'Compara dos monedas diferentes', // Subtítulo de la página
+      
       cryptocurrencies, // Lista de criptomonedas para el formulario
       fiatCurrencies, // Lista de monedas tradicionales para el formulario
       comparison: {

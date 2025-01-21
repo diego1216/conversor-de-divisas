@@ -9,8 +9,7 @@ const renderHome = (req, res) => {
 
     // Renderiza la vista 'index' con los datos necesarios
     res.render('index', {
-      title: 'Conversor de Divisas y Criptomonedas', // Título de la página
-      subtitle: 'Convierte entre monedas tradicionales y criptomonedas', // Subtítulo de la página
+      
       cryptocurrencies, // Lista de criptomonedas
       fiatCurrencies, // Lista de monedas tradicionales
     });

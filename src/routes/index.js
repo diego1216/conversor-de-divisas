@@ -11,7 +11,7 @@ router.get('/', (req, res) => {
     // Renderiza la vista 'index' con los datos de las monedas
     res.render('index', {
       title: 'Conversor de Divisas y Criptomonedas',
-      subtitle: 'Convierte entre monedas tradicionales y criptomonedas',
+      subtitle: 'Convierte entre monedas tradicionales y criptomonedas (los valores se actualizan cada 10 minutos)',
       cryptocurrencies,
       fiatCurrencies,
     });
@@ -40,7 +40,7 @@ router.post('/convert', (req, res) => {
     // Renderiza la vista 'index' con el resultado de la conversión
     res.render('index', {
       title: 'Conversor de Divisas y Criptomonedas',
-      subtitle: 'Convierte entre monedas tradicionales y criptomonedas',
+      subtitle: 'Convierte entre monedas tradicionales y criptomonedas (los valores se actualizan cada 10 minutos)',
       cryptocurrencies,
       fiatCurrencies,
       result: `${amount} ${fromCurrency} = ${result} ${toCurrency}`,
